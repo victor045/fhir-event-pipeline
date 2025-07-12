@@ -65,7 +65,7 @@ docker compose exec app python -m app.services.kafka_consumer
 ## Enviar un Evento FHIR (ejemplo)
 
 ```bash
-docker compose exec app python -m app.test_publish
+docker compose exec app python -m app.script.test_publish
 ```
 
 O con un script real:
