@@ -1,94 +1,99 @@
-# 📦 Logistics AI Project
+# FHIR Event Pipeline
 
-Este proyecto demuestra una solución integral de Inteligencia Artificial aplicada a la logística y transporte. Incluye predicción de demanda, optimización de rutas y cálculo de KPIs logísticos usando Python, Prophet, OR-Tools, Apache Airflow y Streamlit.
+Un sistema de microservicios en Python para manejar eventos clínicos basados en el estándar HL7 FHIR. Utiliza Kafka para la comunicación asíncrona entre productores y consumidores, y almacena los eventos en una base de datos PostgreSQL.
 
 ---
 
-## 🔧 Requisitos
+## Tecnologías Usadas
 
 - Python 3.10+
-- pip
-- Apache Airflow
-- Docker (opcional para despliegue)
+- FastAPI
+- PostgreSQL + SQLAlchemy (asyncpg)
+- Apache Kafka + aiokafka
+- Docker & Docker Compose
+- HL7 FHIR (modelo simplificado)
+- Pytest
 
 ---
 
-## 🚀 Instalación Local Paso a Paso
+## Estructura del Proyecto
+
+```
+app/
+├── models/           # Modelos FHIR y DB
+├── services/         # Kafka Producer & Consumer
+├── utils/            # Logging
+├── config.py         # Configuración global
+├── db.py             # Conexión a la base de datos
+├── init_db.py        # Crea tablas
+├── test_publish.py   # Script de prueba para enviar eventos
+└── main.py           # Entrypoint API (opcional)
+```
+
+---
+
+## Requisitos
+
+- Docker y Docker Compose
+- Make (opcional)
+- Python 3.10 (para desarrollo local)
+
+---
+
+## Desarrollo Local
 
 ```bash
-# 1. Actualiza pip e instala dependencias
-pip install --upgrade pip
-pip install -r requirements.txt
+# 1. Clonar el proyecto
+git clone https://github.com/victor045/fhir-event-pipeline.git
+cd fhir-event-pipeline
 
-# 2. Configura Airflow
-export AIRFLOW_HOME=$(pwd)
-export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="sqlite:///$AIRFLOW_HOME/airflow.db"
-export AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags
+# 2. Crear archivo de entorno
+cp .env.example .env
 
-# 3. Inicializa la base de datos de Airflow y crea un usuario admin
-airflow db init
-airflow users create \
-  --username admin \
-  --password admin \
-  --firstname Admin \
-  --lastname User \
-  --role Admin \
-  --email admin@example.com
+# 3. Levantar servicios
+docker compose up --build
 
-# 4. Ejecuta el script de preparación de datos
-bash setup.sh
+# 4. Inicializar base de datos
+docker compose exec app python -m app.init_db
 
-# 5. Lanza Airflow en segundo plano
-airflow scheduler & airflow webserver
+# 5. Ejecutar consumidor
+docker compose exec app python -m app.services.kafka_consumer
 ```
 
 ---
 
-## 📊 Visualización del Dashboard
-
-Abre otro terminal y corre:
+## Enviar un Evento FHIR (ejemplo)
 
 ```bash
-streamlit run app/dashboard.py
+docker compose exec app python -m app.test_publish
 ```
 
-Esto abre el dashboard interactivo en `http://localhost:8501`
-
----
-
-## 🐳 Despliegue con Docker
+O con un script real:
 
 ```bash
-docker build -t logistics-ai .
-docker run -p 8501:8501 logistics-ai
+docker compose exec app python -m app.scripts.send_real_event
 ```
 
 ---
 
-## 🧠 Estructura del Proyecto
+## Consumir eventos y guardar en DB
 
-- `src/`: Lógica de procesamiento, predicción, ruteo y KPIs.
-- `dags/`: Pipeline automatizado con Apache Airflow.
-- `data/`: Archivos de entrada y salida (CSV).
-- `app/`: Interfaz visual en Streamlit.
-- `setup.sh`: Carga datos de ejemplo.
+Ejecuta el consumidor (si no está corriendo):
+
+```bash
+docker compose exec app python -m app.services.kafka_consumer
+```
 
 ---
 
-## 📅 Automatización con Airflow
+## Testing
 
-Desde el navegador, entra a:
-
+```bash
+pytest tests/
 ```
-http://localhost:8080
-Usuario: admin
-Contraseña: admin
-```
-
-Busca el DAG `daily_logistics_pipeline` y ejecútalo manualmente para correr el pipeline completo de IA.
 
 ---
 
-## ✨ Créditos
+## Licencia
 
-Creado como demostración para aplicar a posiciones de Desarrollador Senior de IA en logística y transporte.
+MIT License. © 2025 Victor045
