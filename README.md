@@ -2,6 +2,10 @@
 
 Un sistema de microservicios en Python para manejar eventos clínicos basados en el estándar HL7 FHIR. Utiliza Kafka para la comunicación asíncrona entre productores y consumidores, y almacena los eventos en una base de datos PostgreSQL.
 
+A microservices system in Python to manage clinical events based on the HL7 FHIR standard. It uses Kafka for asynchronous communication between producers and consumers, and stores events in a PostgreSQL database.
+
+Furthermore, AI features that can be implemented to the consumer are: Medical Risk Prediction, Natural Language Processing (NLP) on Clinical Notes, Anomaly Detection, Smart Recommendations, Real-time Alerts.
+
 ---
 
 ## Tecnologías Usadas
